@@ -1,0 +1,342 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Poppins:wght@500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* VitaSense Design System - Health-tech aesthetic with white and light blue tones */
+
+@layer base {
+  :root {
+    /* Light theme - Clean, medical-grade white with light blue accents */
+    --background: 209 75% 96%;
+    --foreground: 210 58% 17%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 58% 17%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 58% 17%;
+
+    /* Primary - Medical blue */
+    --primary: 197 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Soft blue-gray */
+    --secondary: 199 60% 95%;
+    --secondary-foreground: 210 40% 24%;
+
+    --muted: 206 40% 94%;
+    --muted-foreground: 210 18% 45%;
+
+    /* Accent - Teal for health indicators */
+    --accent: 171 80% 39%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 208 30% 86%;
+    --input: 208 30% 86%;
+    --ring: 197 100% 50%;
+
+    --radius: 1rem;
+
+    --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-display: "Poppins", "Inter", system-ui, sans-serif;
+
+    --hero-image: url("/images/hero-silhouette.svg");
+    --grid-image: url("/images/grid-dots.svg");
+    --lung-image: url("/images/lung-overlay.svg");
+    --wave-image: url("/images/ecg-wave.svg");
+
+    /* Success/Health indicators */
+    --success: 160 70% 40%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 40 90% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --sidebar-background: 210 40% 98%;
+    --sidebar-foreground: 215 25% 25%;
+    --sidebar-primary: 200 85% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 94%;
+    --sidebar-accent-foreground: 215 25% 25%;
+    --sidebar-border: 210 30% 90%;
+    --sidebar-ring: 200 85% 45%;
+  }
+
+  .dark {
+    /* Dark theme - Deep blue-gray with bright blue accents */
+    --background: 222 28% 10%;
+    --foreground: 210 40% 96%;
+
+    --card: 222 24% 13%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 222 24% 13%;
+    --popover-foreground: 210 40% 96%;
+
+    /* Primary - Bright medical blue */
+    --primary: 203 100% 55%;
+    --primary-foreground: 222 28% 10%;
+
+    /* Secondary - Muted blue-gray */
+    --secondary: 220 20% 18%;
+    --secondary-foreground: 210 40% 90%;
+
+    --muted: 220 16% 20%;
+    --muted-foreground: 215 16% 65%;
+
+    /* Accent - Bright teal */
+    --accent: 169 80% 46%;
+    --accent-foreground: 222 28% 10%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 210 40% 95%;
+
+    --border: 220 18% 22%;
+    --input: 220 18% 22%;
+    --ring: 203 100% 55%;
+
+    /* Success/Health indicators */
+    --success: 160 60% 45%;
+    --success-foreground: 220 30% 8%;
+    
+    --warning: 40 85% 55%;
+    --warning-foreground: 220 30% 8%;
+
+    --sidebar-background: 222 26% 11%;
+    --sidebar-foreground: 210 40% 90%;
+    --sidebar-primary: 203 100% 55%;
+    --sidebar-primary-foreground: 222 28% 10%;
+    --sidebar-accent: 220 22% 16%;
+    --sidebar-accent-foreground: 210 40% 90%;
+    --sidebar-border: 220 18% 20%;
+    --sidebar-ring: 203 100% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: var(--font-sans);
+    background-image:
+      linear-gradient(180deg, #eaf6ff 0%, #fdfeff 100%),
+      var(--grid-image);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover, 320px 320px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+@layer utilities {
+  .glass-effect {
+    @apply bg-card/80 backdrop-blur-sm;
+  }
+  
+  .health-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+  }
+
+    .app-shell::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(520px 220px at 12% 0%, rgba(0, 185, 168, 0.18), transparent 60%),
+        radial-gradient(620px 240px at 90% 10%, rgba(0, 150, 255, 0.16), transparent 60%);
+      opacity: 0.9;
+      z-index: 0;
+    }
+
+    .page-hero {
+      position: relative;
+      isolation: isolate;
+    }
+
+    .cinematic-hero {
+      position: relative;
+      min-height: calc(100vh - 4rem);
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .cinematic-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(180deg, rgba(234, 246, 255, 0.9), rgba(253, 254, 255, 0.96)),
+        var(--hero-image),
+        var(--wave-image);
+      background-position: center, right center, center bottom;
+      background-size: cover, 520px, 110% auto;
+      opacity: 0.95;
+      z-index: 0;
+    }
+
+    .hero-orb {
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(0, 185, 168, 0.35), transparent 60%);
+      filter: blur(6px);
+      opacity: 0.9;
+      animation: float-slow 14s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    .hero-orb--right {
+      right: -120px;
+      top: -80px;
+      animation-delay: 1.5s;
+    }
+
+    .hero-orb--left {
+      left: -140px;
+      bottom: -120px;
+      animation-delay: 0.5s;
+    }
+
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(199, 211, 221, 0.6);
+    }
+
+    .section-muted {
+      background: linear-gradient(180deg, rgba(234, 246, 255, 0.8), rgba(253, 254, 255, 0.9));
+    }
+
+    .shadow-soft {
+      box-shadow: 0 24px 60px rgba(13, 42, 69, 0.12);
+    }
+
+    .text-gradient {
+      background: linear-gradient(120deg, #00b9a8, #0096ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .glow-button {
+      box-shadow: 0 12px 30px rgba(0, 150, 255, 0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .glow-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 40px rgba(0, 150, 255, 0.28);
+    }
+
+    .glow-pill {
+      background: linear-gradient(120deg, rgba(0, 150, 255, 0.16), rgba(0, 185, 168, 0.16));
+      border: 1px solid rgba(0, 150, 255, 0.25);
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(199, 211, 221, 0.65);
+      box-shadow: 0 20px 50px rgba(13, 42, 69, 0.08);
+    }
+
+    .ambient-dots {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(0, 185, 168, 0.2) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.25;
+      animation: float-slow 18s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    .annotated-panel {
+      position: relative;
+      background-image: var(--lung-image);
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+    }
+
+    .annotation-line {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(13, 42, 69, 0.4), rgba(13, 42, 69, 0));
+    }
+
+    .neumo-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(234, 246, 255, 0.8));
+      box-shadow: 18px 18px 40px rgba(13, 42, 69, 0.08), -18px -18px 40px rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(199, 211, 221, 0.8);
+    }
+
+    .wave-bars {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 6px;
+      align-items: end;
+      height: 120px;
+    }
+
+    .wave-bars span {
+      display: block;
+      width: 100%;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(0, 150, 255, 0.9), rgba(0, 201, 167, 0.5));
+      animation: wave-pulse 1.8s ease-in-out infinite;
+    }
+
+    .anchor-offset {
+      scroll-margin-top: 96px;
+    }
+}
+
+  @keyframes float-slow {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+
+    @keyframes wave-pulse {
+      0%,
+      100% {
+        opacity: 0.6;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+    50% {
+      transform: translate3d(0, -18px, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-orb {
+      animation: none;
+    }
+  }
