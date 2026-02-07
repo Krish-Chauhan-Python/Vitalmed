@@ -115,11 +115,14 @@ const HeartBackground = ({ className }: HeartBackgroundProps) => {
 
     const pointer = new THREE.Vector2(0, 0);
     const targetRotation = new THREE.Vector2(0, 0);
+    const raycaster = new THREE.Raycaster();
+    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const pointerWorld = new THREE.Vector3();
 
     const handlePointer = (event: PointerEvent) => {
       const rect = container.getBoundingClientRect();
       const x = ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 2 - 1;
-      const y = ((event.clientY - rect.top) / Math.max(rect.height, 1)) * 2 - 1;
+      const y = -(((event.clientY - rect.top) / Math.max(rect.height, 1)) * 2 - 1);
       pointer.set(x, y);
     };
 
@@ -141,31 +144,38 @@ const HeartBackground = ({ className }: HeartBackgroundProps) => {
 
     const animate = () => {
       const elapsed = clock.getElapsedTime();
-      const beat = 1 + 0.06 * Math.sin(elapsed * 2.2) + 0.03 * Math.sin(elapsed * 4.6 + 1.2);
-      group.scale.setScalar(beat);
+      group.scale.setScalar(1);
 
-      const beatKick = Math.max(0, Math.sin(elapsed * 2.8));
-      const waveStrength = beatKick * beatKick * 0.22;
+      raycaster.setFromCamera(pointer, camera);
+      raycaster.ray.intersectPlane(plane, pointerWorld);
+
+      const repelRadius = 0.6;
+      const repelStrength = 0.28;
 
       for (let i = 0; i < basePoints.length; i += 1) {
         const base = basePoints[i];
-        const wave = Math.sin(elapsed * 6.2 + base.y * 5.2);
-        const offset = waveStrength * wave;
         const jitter = jitterAmp[i];
         const jitterX = Math.sin(elapsed * 1.2 + jitterPhaseX[i]) * jitter;
         const jitterY = Math.cos(elapsed * 1.4 + jitterPhaseY[i]) * jitter;
         const jitterZ = Math.sin(elapsed * 1.6 + jitterPhaseZ[i]) * jitter;
 
+        const dx = base.x - pointerWorld.x;
+        const dy = base.y - pointerWorld.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const falloff = Math.max(0, 1 - dist / repelRadius);
+        const repel = falloff * falloff * repelStrength;
+        const repelX = (dx / (dist + 0.001)) * repel;
+        const repelY = (dy / (dist + 0.001)) * repel;
+
         positionAttribute.setXYZ(
           i,
-          base.x * (1 + offset * 0.08) + jitterX,
-          base.y * (1 + offset * 0.12) + jitterY,
-          base.z + offset * 0.6 + jitterZ
+          base.x + repelX + jitterX,
+          base.y + repelY + jitterY,
+          base.z + jitterZ
         );
       }
       positionAttribute.needsUpdate = true;
 
-      const cameraAngle = elapsed * 0.12;
       const offsetX = pointer.x * 0.6;
       const offsetY = pointer.y * 0.3;
 
@@ -173,8 +183,8 @@ const HeartBackground = ({ className }: HeartBackgroundProps) => {
       group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, targetRotation.x, 0.05);
       group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, targetRotation.y, 0.05);
 
-      camera.position.x = Math.cos(cameraAngle) * CAMERA_RADIUS + offsetX;
-      camera.position.z = Math.sin(cameraAngle) * CAMERA_RADIUS + offsetX * 0.2;
+      camera.position.x = offsetX;
+      camera.position.z = CAMERA_RADIUS;
       camera.position.y = offsetY;
       camera.lookAt(0, 0, 0);
 
