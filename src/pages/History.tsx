@@ -27,8 +27,17 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { PageNav } from "@/components/layout/PageNav";
 import { supabase } from "@/integrations/supabase/client";
 import {
   getAudioTypeLabel,
@@ -59,6 +68,8 @@ export default function History() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [filter, setFilter] = useState<FilterType>("all");
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
 
   const chartConfig = {
     confidence: {
@@ -170,15 +181,33 @@ export default function History() {
         new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
     );
 
+  const totalRecords = analyses?.length ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const pagedAnalyses = (analyses ?? []).slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+
   return (
-    <div className="container py-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
-      >
+    <div className="page-layout">
+      <PageNav
+        title="History"
+        items={[
+          { href: "/history#overview", label: "Overview" },
+          { href: "/history#trend", label: "Trend" },
+          { href: "/history#records", label: "Records" },
+        ]}
+      />
+      <div className="page-content">
+        <div className="container py-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <section id="overview" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <HistoryIcon className="h-8 w-8 text-primary" />
@@ -192,7 +221,13 @@ export default function History() {
           {/* Filter */}
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-muted-foreground" />
-            <Select value={filter} onValueChange={(v) => setFilter(v as FilterType)}>
+            <Select
+              value={filter}
+              onValueChange={(v) => {
+                setFilter(v as FilterType);
+                setPage(1);
+              }}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by type" />
               </SelectTrigger>
@@ -204,10 +239,10 @@ export default function History() {
               </SelectContent>
             </Select>
           </div>
-        </div>
+        </section>
 
         {/* Confidence Trend */}
-        <Card>
+        <Card id="trend">
           <CardHeader>
             <CardTitle className="text-lg">Confidence Trend</CardTitle>
           </CardHeader>
@@ -259,7 +294,7 @@ export default function History() {
         </Card>
 
         {/* Table */}
-        <Card>
+        <Card id="records">
           <CardHeader>
             <CardTitle className="text-lg">
               {analyses?.length ?? 0} Analysis Records
@@ -272,7 +307,7 @@ export default function History() {
                   <Skeleton key={i} className="h-16 w-full" />
                 ))}
               </div>
-            ) : analyses && analyses.length > 0 ? (
+              ) : analyses && analyses.length > 0 ? (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -286,7 +321,7 @@ export default function History() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {analyses.map((analysis) => {
+                    {pagedAnalyses.map((analysis) => {
                       const confidenceValue = Number(analysis.confidence);
                       return (
                         <TableRow key={analysis.id}>
@@ -363,7 +398,51 @@ export default function History() {
             )}
           </CardContent>
         </Card>
-      </motion.div>
+
+        {totalRecords > pageSize && (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setPage((prev) => Math.max(1, prev - 1));
+                  }}
+                />
+              </PaginationItem>
+              {Array.from({ length: totalPages }).map((_, index) => {
+                const pageNumber = index + 1;
+                return (
+                  <PaginationItem key={pageNumber}>
+                    <PaginationLink
+                      href="#"
+                      isActive={pageNumber === currentPage}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setPage(pageNumber);
+                      }}
+                    >
+                      {pageNumber}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setPage((prev) => Math.min(totalPages, prev + 1));
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 }

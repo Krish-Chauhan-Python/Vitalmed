@@ -7,6 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { PageNav } from "@/components/layout/PageNav";
 
 export default function About() {
   const sections = [
@@ -66,19 +67,31 @@ We comply with industry-standard security practices to protect your sensitive he
   ];
 
   return (
-    <div className="container py-8 max-w-4xl">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-8"
-      >
+    <div className="page-layout">
+      <PageNav
+        title="About"
+        items={[
+          { href: "/about#overview", label: "Overview" },
+          { href: "/about#how-it-works", label: "How It Works" },
+          { href: "/about#supported-audio", label: "Supported Audio" },
+          { href: "/about#privacy", label: "Privacy & Security" },
+          { href: "/about#faqs", label: "FAQs" },
+        ]}
+      />
+      <div className="page-content">
+        <div className="container py-8 max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-8"
+          >
         {/* Header */}
-        <div className="text-center">
+        <section id="overview" className="text-center">
           <h1 className="text-3xl font-bold mb-2">About VitaSense</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Learn how our health audio analysis platform works and how we protect your privacy.
           </p>
-        </div>
+        </section>
 
         {/* Demo Mode Warning */}
         <Card className="border-yellow-500/50 bg-yellow-500/10">
@@ -106,6 +119,7 @@ We comply with industry-standard security practices to protect your sensitive he
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
+              id={section.title === "How It Works" ? "how-it-works" : section.title === "Supported Audio Types" ? "supported-audio" : "privacy"}
             >
               <Card>
                 <CardHeader>
@@ -127,7 +141,7 @@ We comply with industry-standard security practices to protect your sensitive he
         </div>
 
         {/* FAQs */}
-        <Card>
+        <Card id="faqs">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -153,11 +167,13 @@ We comply with industry-standard security practices to protect your sensitive he
         </Card>
 
         {/* Footer Note */}
-        <div className="text-center text-sm text-muted-foreground">
+        <div className="text-center text-sm text-muted-foreground" id="privacy-note">
           <Shield className="h-5 w-5 inline-block mr-2 mb-1" />
           VitaSense is committed to protecting your health data privacy.
         </div>
-      </motion.div>
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 }

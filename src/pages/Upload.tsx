@@ -7,6 +7,7 @@ import { AudioTypeSelector } from "@/components/upload/AudioTypeSelector";
 import { AnalysisResult } from "@/components/upload/AnalysisResult";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { PageNav } from "@/components/layout/PageNav";
 import { supabase } from "@/integrations/supabase/client";
 import { type AudioType } from "@/lib/mockAnalysis";
 
@@ -128,32 +129,42 @@ export default function Upload() {
   };
 
   return (
-    <div className="container py-8 max-w-2xl">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
-      >
+    <div className="page-layout">
+      <PageNav
+        title="Upload"
+        items={[
+          { href: "/upload#overview", label: "Overview" },
+          { href: "/upload#analysis", label: "Analysis" },
+          { href: "/upload#results", label: "Results" },
+        ]}
+      />
+      <div className="page-content">
+        <div className="container py-8 max-w-2xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
         {/* Header */}
-        <div className="text-center">
+        <section id="overview" className="text-center">
           <h1 className="text-3xl font-bold mb-2">Audio Analysis</h1>
           <p className="text-muted-foreground">
             Upload an audio file and select the type of analysis
           </p>
-        </div>
+        </section>
 
         {/* Analysis Section */}
         {!analysisResult ? (
           <>
             {/* Type Selector */}
-            <div className="space-y-3">
+            <section id="analysis" className="space-y-3">
               <label className="text-sm font-medium">Select Analysis Type</label>
               <AudioTypeSelector
                 selectedType={audioType}
                 onSelect={setAudioType}
                 disabled={isAnalyzing}
               />
-            </div>
+            </section>
 
             {/* File Uploader */}
             <AudioUploader
@@ -185,6 +196,7 @@ export default function Upload() {
             </motion.div>
           </>
         ) : (
+          <section id="results">
           <AnalysisResult
             audioType={audioType}
             prediction={analysisResult.prediction}
@@ -195,8 +207,11 @@ export default function Upload() {
             onReset={handleClear}
             isSaving={isSaving}
           />
+          </section>
         )}
-      </motion.div>
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 }

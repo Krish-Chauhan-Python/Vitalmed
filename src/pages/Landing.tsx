@@ -20,6 +20,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
+import { PageNav } from "@/components/layout/PageNav";
 
 export default function Landing() {
   const { toast } = useToast();
@@ -111,7 +112,16 @@ export default function Landing() {
   };
 
   return (
-    <div className="text-[#0D2A45]">
+    <div className="page-layout">
+      <PageNav
+        title="Landing"
+        items={[
+          { href: "/#technology", label: "Technology" },
+          { href: "/#insights", label: "Insights" },
+          { href: "/#contact", label: "Contact" },
+        ]}
+      />
+      <div className="page-content text-[#0D2A45]">
       <section id="top" className="cinematic-hero anchor-offset">
         <div className="ambient-dots" />
         <div className="hero-orb hero-orb--right" />
@@ -428,6 +438,7 @@ export default function Landing() {
           </Card>
         </div>
       </section>
+      </div>
     </div>
   );
 }

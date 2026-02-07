@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Activity, Menu, User, LogOut, X } from "lucide-react";
+import { Activity, Menu, LogOut, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function Navbar() {
@@ -17,41 +18,60 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: "/#top", label: "Home", hash: "#top" },
-    { href: "/#technology", label: "Technology", hash: "#technology" },
-    { href: "/#insights", label: "Insights", hash: "#insights" },
-    { href: "/history", label: "History", hash: null, protected: true },
+    { href: "/", label: "Home", hash: null },
     { href: "/about", label: "About", hash: null },
-    { href: "/#contact", label: "Contact", hash: "#contact" },
+    { href: "/history", label: "History", hash: null, protected: true },
+    { href: "#", label: "Med Assistant", hash: null, disabled: true },
   ];
 
-  const isActive = (hash: string | null) =>
-    hash
-      ? location.pathname === "/" && location.hash === hash
-      : location.pathname === "/about";
+  const isActive = (hash: string | null, href: string) => {
+    if (hash) {
+      return location.pathname === "/" && location.hash === hash;
+    }
+    if (href === "/") {
+      return location.pathname === "/";
+    }
+    return location.pathname === href;
+  };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-white/40 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-slate-800/60 dark:bg-slate-950/70">
+    <nav className="sticky top-0 z-50 w-full border-b border-[#203245] bg-[#0b1118]/95 backdrop-blur supports-[backdrop-filter]:bg-[#0b1118]/90">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 font-bold text-xl">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg health-gradient shadow-soft">
-            <Activity className="h-5 w-5 text-primary-foreground" />
+            <img src="/images/red logo.png" alt="VitalMed Logo" className="h-5 w-5" />
           </div>
-          <span className="hidden sm:inline text-slate-900 dark:text-slate-100">VitalMed</span>
+          <span className="hidden sm:inline text-slate-100">VitalMed</span>
         </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => {
             if (link.protected && !user) return null;
+            const className = `text-sm font-medium transition-colors hover:text-sky-200 ${
+              isActive(link.hash, link.href) ? "text-sky-200" : "text-slate-200/70"
+            } ${link.disabled ? "cursor-not-allowed opacity-60" : ""}`;
+
+            if (link.href.startsWith("/")) {
+              return (
+                <Link key={link.href} to={link.href} className={className}>
+                  {link.label}
+                </Link>
+              );
+            }
+
             return (
               <a
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  isActive(link.hash) ? "text-primary" : "text-slate-600 dark:text-slate-300"
-                }`}
+                onClick={(event) => {
+                  if (link.disabled) {
+                    event.preventDefault();
+                  }
+                }}
+                aria-disabled={link.disabled}
+                className={className}
               >
                 {link.label}
               </a>
@@ -70,7 +90,12 @@ export function Navbar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
-                  <User className="h-5 w-5" />
+                  <Avatar className="h-9 w-9 border border-slate-700/60">
+                    <AvatarImage src="" alt={user.email ?? "User"} />
+                    <AvatarFallback className="bg-slate-800 text-slate-200">
+                      {(user.email ?? "U").slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
@@ -110,16 +135,38 @@ export function Navbar() {
           <div className="container py-4 flex flex-col gap-2">
             {navLinks.map((link) => {
               if (link.protected && !user) return null;
+              const className = `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive(link.hash, link.href)
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted dark:hover:bg-slate-800"
+              } ${link.disabled ? "cursor-not-allowed opacity-60" : ""}`;
+
+              if (link.href.startsWith("/")) {
+                return (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={className}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              }
+
               return (
                 <a
                   key={link.href}
                   href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive(link.hash)
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-muted dark:hover:bg-slate-800"
-                  }`}
+                  onClick={(event) => {
+                    if (link.disabled) {
+                      event.preventDefault();
+                      return;
+                    }
+                    setMobileMenuOpen(false);
+                  }}
+                  aria-disabled={link.disabled}
+                  className={className}
                 >
                   {link.label}
                 </a>
