@@ -8,7 +8,7 @@ interface AudioTypeSelectorProps {
   disabled?: boolean;
 }
 
-const audioTypes: AudioType[] = ["respiratory", "cough", "heartbeat"];
+const audioTypes: AudioType[] = ["respiratory", "heartbeat", "cough"];
 
 export function AudioTypeSelector({
   selectedType,
@@ -28,7 +28,21 @@ export function AudioTypeSelector({
             onClick={() => !disabled && onSelect(type)}
           >
             <CardContent className="flex flex-col items-center gap-2 p-4">
-              <span className="text-3xl">{getAudioTypeIcon(type)}</span>
+              <span className="text-3xl">
+                {(() => {
+                  const icon = getAudioTypeIcon(type);
+                  if (icon.kind === "image") {
+                    return (
+                      <img
+                        src={icon.value}
+                        alt="Bowel sounds"
+                        className="h-8 w-8"
+                      />
+                    );
+                  }
+                  return icon.value;
+                })()}
+              </span>
               <span className="text-sm font-medium text-center">
                 {getAudioTypeLabel(type)}
               </span>

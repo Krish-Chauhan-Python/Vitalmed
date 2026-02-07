@@ -265,9 +265,32 @@
       padding-left: 0;
     }
 
+    .page-layout.upload-theme {
+      padding-left: 0;
+    }
+
     .page-content {
       flex: 1;
       min-width: 0;
+    }
+
+    .upload-theme {
+      min-height: calc(100vh - 4rem);
+      transition: background 0.6s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .upload-theme--respiratory {
+      background: linear-gradient(135deg, rgba(0, 150, 255, 0.32), rgba(0, 185, 168, 0.18));
+    }
+
+    .upload-theme--heartbeat {
+      background: linear-gradient(135deg, rgba(255, 52, 85, 0.35), rgba(255, 140, 160, 0.18));
+    }
+
+    .upload-theme--cough {
+      background: linear-gradient(135deg, rgba(210, 163, 118, 0.38), rgba(241, 210, 178, 0.22));
     }
 
     .page-nav {

@@ -104,17 +104,22 @@ export async function performAnalysis(file: File) {
 export function getAudioTypeLabel(type: AudioType): string {
   const labels: Record<AudioType, string> = {
     respiratory: "Respiratory Analysis",
-    cough: "Cough Analysis",
+    cough: "Bowel Sounds Analysis",
     heartbeat: "Heartbeat Analysis",
   };
   return labels[type];
 }
 
-export function getAudioTypeIcon(type: AudioType): string {
-  const icons: Record<AudioType, string> = {
-    respiratory: "🫁",
-    cough: "💨",
-    heartbeat: "❤️",
+export type AudioTypeIcon = {
+  kind: "emoji" | "image";
+  value: string;
+};
+
+export function getAudioTypeIcon(type: AudioType): AudioTypeIcon {
+  const icons: Record<AudioType, AudioTypeIcon> = {
+    respiratory: { kind: "emoji", value: "🫁" },
+    cough: { kind: "image", value: "/images/intestein.png" },
+    heartbeat: { kind: "emoji", value: "❤️" },
   };
   return icons[type];
 }

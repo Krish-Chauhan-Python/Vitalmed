@@ -215,7 +215,7 @@ const HeartBackground = ({ className }: HeartBackgroundProps) => {
     <div
       ref={containerRef}
       className={className ?? "heart-background"}
-      style={{ position: "fixed", inset: 0, width: "100vw", height: "100vh", zIndex: 0, pointerEvents: "none", opacity: 1 }}
+      style={{ position: "fixed", inset: 0, width: "100vw", height: "100vh", zIndex: -1, pointerEvents: "none", opacity: 0.45 }}
       aria-hidden="true"
     />
   );

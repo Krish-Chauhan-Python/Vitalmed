@@ -52,6 +52,13 @@ export default function Upload() {
   const [isSaving, setIsSaving] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisData | null>(null);
 
+  const uploadGradient =
+    audioType === "respiratory"
+      ? "linear-gradient(135deg, rgba(0, 150, 255, 0.45), rgba(0, 185, 168, 0.2))"
+      : audioType === "heartbeat"
+      ? "linear-gradient(135deg, rgba(255, 52, 85, 0.5), rgba(255, 140, 160, 0.25))"
+      : "linear-gradient(135deg, rgba(210, 163, 118, 0.5), rgba(241, 210, 178, 0.25))";
+
   // Handle file selection
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
@@ -129,7 +136,7 @@ export default function Upload() {
   };
 
   return (
-    <div className="page-layout">
+    <div className="page-layout upload-theme" style={{ background: uploadGradient }}>
       <PageNav
         title="Upload"
         items={[

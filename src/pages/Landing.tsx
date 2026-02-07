@@ -298,9 +298,17 @@ export default function Landing() {
                 <CloudUpload className="h-8 w-8 text-primary mx-auto mb-3" />
                 <p className="text-sm font-semibold text-[#0D2A45]">Drop your file here</p>
                 <p className="text-xs text-[#6B7C8C]">WAV or MP3 up to 10MB</p>
-                <Button size="sm" className="mt-4 glow-button rounded-full" onClick={handlePredictDemo}>
-                  Upload Audio
-                </Button>
+                <div className="mt-4 grid gap-2">
+                  <Button size="sm" className="glow-button rounded-full" onClick={handlePredictDemo}>
+                    Respiratory Analysis
+                  </Button>
+                  <Button size="sm" variant="outline" className="rounded-full" onClick={handlePredictDemo}>
+                    Heartbeat Analysis
+                  </Button>
+                  <Button size="sm" variant="outline" className="rounded-full" onClick={handlePredictDemo}>
+                    Bowel Sounds Analysis
+                  </Button>
+                </div>
               </div>
 
               <div className="mt-6">

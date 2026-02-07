@@ -234,7 +234,7 @@ export default function History() {
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="respiratory">Respiratory</SelectItem>
-                <SelectItem value="cough">Cough</SelectItem>
+                <SelectItem value="cough">Bowel Sounds</SelectItem>
                 <SelectItem value="heartbeat">Heartbeat</SelectItem>
               </SelectContent>
             </Select>
@@ -333,7 +333,19 @@ export default function History() {
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              {getAudioTypeIcon(analysis.audio_type)}
+                              {(() => {
+                                const icon = getAudioTypeIcon(analysis.audio_type);
+                                if (icon.kind === "image") {
+                                  return (
+                                    <img
+                                      src={icon.value}
+                                      alt="Bowel sounds"
+                                      className="h-4 w-4"
+                                    />
+                                  );
+                                }
+                                return <span>{icon.value}</span>;
+                              })()}
                               <span className="hidden md:inline text-sm">
                                 {getAudioTypeLabel(analysis.audio_type)}
                               </span>
