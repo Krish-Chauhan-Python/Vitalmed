@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Activity, Menu, Moon, Sun, User, LogOut, X } from "lucide-react";
+import { Activity, Menu, User, LogOut, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,11 +10,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "@/contexts/ThemeContext";
 
 export function Navbar() {
   const { user, signOut } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -40,7 +38,7 @@ export function Navbar() {
           <div className="flex h-9 w-9 items-center justify-center rounded-lg health-gradient shadow-soft">
             <Activity className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="hidden sm:inline text-slate-900 dark:text-slate-100">VitaSense</span>
+          <span className="hidden sm:inline text-slate-900 dark:text-slate-100">VitalMed</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -63,15 +61,6 @@ export function Navbar() {
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-2">
-          {/* Theme Toggle */}
-          <Button variant="ghost" size="icon" onClick={toggleTheme}>
-            {theme === "light" ? (
-              <Moon className="h-5 w-5" />
-            ) : (
-              <Sun className="h-5 w-5" />
-            )}
-          </Button>
-
           {/* User Menu / Auth Buttons */}
           <Button size="sm" className="rounded-full glow-button" asChild>
             <Link to="/upload">Try Demo</Link>
