@@ -20,7 +20,7 @@ export function AudioTypeSelector({
       {audioTypes.map((type) => (
         <motion.div key={type} whileHover={{ scale: disabled ? 1 : 1.02 }} whileTap={{ scale: disabled ? 1 : 0.98 }}>
           <Card
-            className={`cursor-pointer transition-all ${
+            className={`audio-type-button cursor-pointer transition-all ${
               selectedType === type
                 ? "border-primary ring-2 ring-primary/20"
                 : "hover:border-primary/50"

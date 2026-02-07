@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -52,12 +52,74 @@ export default function Upload() {
   const [isSaving, setIsSaving] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisData | null>(null);
 
-  const uploadGradient =
-    audioType === "respiratory"
-      ? "linear-gradient(135deg, rgba(0, 150, 255, 0.45), rgba(0, 185, 168, 0.2))"
-      : audioType === "heartbeat"
-      ? "linear-gradient(135deg, rgba(255, 52, 85, 0.5), rgba(255, 140, 160, 0.25))"
-      : "linear-gradient(135deg, rgba(210, 163, 118, 0.5), rgba(241, 210, 178, 0.25))";
+  const gradientMap = useMemo(
+    () => ({
+      respiratory:
+        "radial-gradient(140% 140% at 10% 10%, rgba(0, 150, 255, 0.55), transparent 60%), linear-gradient(120deg, rgba(0, 150, 255, 0.6), rgba(120, 70, 255, 0.45), rgba(0, 185, 168, 0.35))",
+      heartbeat:
+        "radial-gradient(140% 140% at 15% 15%, rgba(255, 52, 85, 0.6), transparent 55%), linear-gradient(120deg, rgba(255, 52, 85, 0.6), rgba(255, 112, 180, 0.45), rgba(255, 170, 190, 0.35))",
+      cough:
+        "radial-gradient(140% 140% at 10% 10%, rgba(210, 163, 118, 0.65), transparent 55%), linear-gradient(120deg, rgba(210, 163, 118, 0.6), rgba(241, 188, 150, 0.48), rgba(255, 220, 196, 0.38))",
+    }),
+    [],
+  );
+
+  const [currentGradient, setCurrentGradient] = useState(gradientMap.respiratory);
+  const [nextGradient, setNextGradient] = useState(gradientMap.respiratory);
+  const [fade, setFade] = useState(0);
+  const transitionTimeoutRef = useRef<number | null>(null);
+  const transitionIdRef = useRef(0);
+
+  useEffect(() => {
+    const incoming = gradientMap[audioType];
+    if (incoming === currentGradient) {
+      return undefined;
+    }
+
+    if (transitionTimeoutRef.current) {
+      window.clearTimeout(transitionTimeoutRef.current);
+    }
+
+    transitionIdRef.current += 1;
+    const transitionId = transitionIdRef.current;
+
+    setNextGradient(incoming);
+    setFade(0);
+
+    const raf = requestAnimationFrame(() => {
+      if (transitionIdRef.current === transitionId) {
+        setFade(1);
+      }
+    });
+
+    transitionTimeoutRef.current = window.setTimeout(() => {
+      if (transitionIdRef.current !== transitionId) {
+        return;
+      }
+      setCurrentGradient(incoming);
+      setFade(0);
+    }, 1200);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      if (transitionTimeoutRef.current) {
+        window.clearTimeout(transitionTimeoutRef.current);
+      }
+    };
+  }, [audioType, currentGradient, gradientMap]);
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (audioType === "heartbeat") {
+      root.classList.add("heart-emphasis");
+    } else {
+      root.classList.remove("heart-emphasis");
+    }
+    return () => {
+      root.classList.remove("heart-emphasis");
+    };
+  }, [audioType]);
+
 
   // Handle file selection
   const handleFileSelect = (file: File) => {
@@ -136,7 +198,14 @@ export default function Upload() {
   };
 
   return (
-    <div className="page-layout upload-theme" style={{ background: uploadGradient }}>
+    <div
+      className="page-layout upload-theme"
+      style={{
+        ["--upload-gradient" as "--upload-gradient"]: currentGradient,
+        ["--upload-gradient-next" as "--upload-gradient-next"]: nextGradient,
+        ["--upload-fade" as "--upload-fade"]: String(fade),
+      }}
+    >
       <PageNav
         title="Upload"
         items={[

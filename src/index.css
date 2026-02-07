@@ -115,6 +115,9 @@
     --sidebar-accent-foreground: 210 40% 90%;
     --sidebar-border: 220 18% 20%;
     --sidebar-ring: 203 100% 55%;
+
+    --heart-opacity: 0.45;
+    --heart-filter: none;
   }
 }
 
@@ -133,6 +136,11 @@
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover, 320px 320px;
+  }
+
+  .heart-emphasis {
+    --heart-opacity: 0.85;
+    --heart-filter: brightness(1.25) saturate(1.2);
   }
 
   h1,
@@ -276,21 +284,52 @@
 
     .upload-theme {
       min-height: calc(100vh - 4rem);
-      transition: background 0.6s ease;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .upload-theme::before,
+    .upload-theme::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: var(--upload-gradient);
+      background-size: 200% 200%;
+      animation: upload-flow 16s ease-in-out infinite;
+      opacity: 1;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .upload-theme::after {
+      background-image: var(--upload-gradient-next, var(--upload-gradient));
+      opacity: var(--upload-fade, 0);
+      transition: opacity 1.2s ease;
+    }
+
+    .upload-theme > .page-nav,
+    .upload-theme > .page-content {
       position: relative;
       z-index: 1;
     }
 
-    .upload-theme--respiratory {
-      background: linear-gradient(135deg, rgba(0, 150, 255, 0.32), rgba(0, 185, 168, 0.18));
+
+
+    @keyframes upload-flow {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
     }
 
-    .upload-theme--heartbeat {
-      background: linear-gradient(135deg, rgba(255, 52, 85, 0.35), rgba(255, 140, 160, 0.18));
-    }
-
-    .upload-theme--cough {
-      background: linear-gradient(135deg, rgba(210, 163, 118, 0.38), rgba(241, 210, 178, 0.22));
+    .audio-type-button {
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
     }
 
     .page-nav {
