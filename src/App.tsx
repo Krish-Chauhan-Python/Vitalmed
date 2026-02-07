@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
+import HeartBackground from "@/components/HeartBackground";
 import Landing from "./pages/Landing";
 import Upload from "./pages/Upload";
 import History from "./pages/History";
@@ -25,6 +26,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <HeartBackground />
           <BrowserRouter>
             <div className="min-h-screen flex flex-col app-shell">
               <Navbar />
