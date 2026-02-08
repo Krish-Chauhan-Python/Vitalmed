@@ -28,7 +28,7 @@ export function PageNav({ title = "On this page", items }: PageNavProps) {
   };
 
   return (
-    <aside className="page-nav">
+    <aside className="page-nav mt-5">
       <Card className="page-nav__panel">
         <CardHeader className="page-nav__header">
           <CardTitle className="page-nav__title">{title}</CardTitle>

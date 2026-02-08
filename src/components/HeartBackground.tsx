@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-const HEART_POINT_COUNT = 300;
-const LINE_DISTANCE = 0.38;
+const HEART_POINT_COUNT = 85 ;
+const LINE_DISTANCE = 0.55;
 const CAMERA_RADIUS = 3.4;
 
 type HeartBackgroundProps = {
@@ -33,11 +33,12 @@ const HeartBackground = ({ className }: HeartBackgroundProps) => {
     scene.add(group);
 
     const points = new Float32Array(HEART_POINT_COUNT * 3);
-    const basePoints: THREE.Vector3[] = [];
-    const jitterPhaseX: number[] = [];
-    const jitterPhaseY: number[] = [];
-    const jitterPhaseZ: number[] = [];
-    const jitterAmp: number[] = [];
+    const targetPoints = new Float32Array(HEART_POINT_COUNT * 3);
+    let basePoints: THREE.Vector3[] = [];
+    let jitterPhaseX: number[] = [];
+    let jitterPhaseY: number[] = [];
+    let jitterPhaseZ: number[] = [];
+    let jitterAmp: number[] = [];
     let seed = 2026;
     const seededRandom = (min: number, max: number) => {
       seed += 1;
@@ -45,29 +46,65 @@ const HeartBackground = ({ className }: HeartBackgroundProps) => {
       return THREE.MathUtils.lerp(min, max, value);
     };
 
-    for (let i = 0; i < HEART_POINT_COUNT; i += 1) {
-      const t = seededRandom(0, Math.PI * 2);
-      const x = 16 * Math.pow(Math.sin(t), 3);
-      const y =
-        13 * Math.cos(t) -
-        5 * Math.cos(2 * t) -
-        2 * Math.cos(3 * t) -
-        Math.cos(4 * t);
-      const z = seededRandom(-1.6, 1.6);
+    const resetPointArrays = () => {
+      basePoints = [];
+      jitterPhaseX = [];
+      jitterPhaseY = [];
+      jitterPhaseZ = [];
+      jitterAmp = [];
+    };
 
-      const vec = new THREE.Vector3(x, y, z)
-        .multiplyScalar(0.085)
-        .add(new THREE.Vector3(seededRandom(-0.035, 0.035), seededRandom(-0.035, 0.035), 0));
-
-      basePoints.push(vec);
+    const fillCommonJitter = () => {
+      const index = basePoints.length - 1;
       jitterPhaseX.push(seededRandom(0, Math.PI * 2));
       jitterPhaseY.push(seededRandom(0, Math.PI * 2));
       jitterPhaseZ.push(seededRandom(0, Math.PI * 2));
-      jitterAmp.push(seededRandom(0.002, 0.008));
-      points[i * 3] = vec.x;
-      points[i * 3 + 1] = vec.y;
-      points[i * 3 + 2] = vec.z;
-    }
+      jitterAmp.push(seededRandom(0.001, 0.003));
+      points[index * 3] = basePoints[index].x;
+      points[index * 3 + 1] = basePoints[index].y;
+      points[index * 3 + 2] = basePoints[index].z;
+    };
+
+    const buildHeart = () => {
+      resetPointArrays();
+      const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+      for (let i = 0; i < HEART_POINT_COUNT; i += 1) {
+        const t = (i * goldenAngle) % (Math.PI * 2);
+        const x = 16 * Math.pow(Math.sin(t), 3);
+        const y =
+          13 * Math.cos(t) -
+          5 * Math.cos(2 * t) -
+          2 * Math.cos(3 * t) -
+          Math.cos(4 * t);
+        const zPhase = (i * goldenAngle * 1.37) % 1;
+        const z = THREE.MathUtils.lerp(-1.4, 1.4, zPhase);
+
+        const vec = new THREE.Vector3(x, y, z)
+          .multiplyScalar(0.1)
+          .add(new THREE.Vector3(seededRandom(-0.02, 0.02), seededRandom(-0.02, 0.02), 0));
+
+        basePoints.push(vec);
+        fillCommonJitter();
+      }
+    };
+
+
+    const rebuildLines = () => {
+      const linePositions: number[] = [];
+      for (let i = 0; i < basePoints.length; i += 1) {
+        const a = basePoints[i];
+        for (let j = i + 1; j < basePoints.length; j += 1) {
+          const b = basePoints[j];
+          if (a.distanceToSquared(b) < LINE_DISTANCE * LINE_DISTANCE) {
+            linePositions.push(a.x, a.y, a.z, b.x, b.y, b.z);
+          }
+        }
+      }
+      lineGeometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(linePositions, 3)
+      );
+    };
 
     const geometry = new THREE.BufferGeometry();
     const positionAttribute = new THREE.BufferAttribute(points, 3);
@@ -84,31 +121,38 @@ const HeartBackground = ({ className }: HeartBackgroundProps) => {
     const pointCloud = new THREE.Points(geometry, pointsMaterial);
     group.add(pointCloud);
 
-    const linePositions: number[] = [];
-    for (let i = 0; i < basePoints.length; i += 1) {
-      const a = basePoints[i];
-      for (let j = i + 1; j < basePoints.length; j += 1) {
-        const b = basePoints[j];
-        if (a.distanceToSquared(b) < LINE_DISTANCE * LINE_DISTANCE) {
-          linePositions.push(a.x, a.y, a.z, b.x, b.y, b.z);
-        }
-      }
-    }
-
     const lineGeometry = new THREE.BufferGeometry();
-    lineGeometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(linePositions, 3)
-    );
 
     const lineMaterial = new THREE.LineBasicMaterial({
       color: new THREE.Color("#ff2d3f"),
       transparent: true,
-      opacity: 0.36,
+      opacity: 1,
     });
 
     const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
     group.add(lines);
+
+    const syncTargetPoints = () => {
+      for (let i = 0; i < basePoints.length; i += 1) {
+        targetPoints[i * 3] = basePoints[i].x;
+        targetPoints[i * 3 + 1] = basePoints[i].y;
+        targetPoints[i * 3 + 2] = basePoints[i].z;
+      }
+    };
+    const rebuildShape = (instant = false) => {
+      seed = 2026;
+      buildHeart();
+      syncTargetPoints();
+      rebuildLines();
+      if (instant) {
+        for (let i = 0; i < points.length; i += 1) {
+          points[i] = targetPoints[i];
+        }
+        positionAttribute.needsUpdate = true;
+      }
+    };
+
+    rebuildShape(true);
 
     const ambient = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambient);
@@ -144,14 +188,16 @@ const HeartBackground = ({ className }: HeartBackgroundProps) => {
 
     const animate = () => {
       const elapsed = clock.getElapsedTime();
-      group.scale.setScalar(1);
+      const pulse = 1 + 0.035 * Math.sin(elapsed * 2.6) + 0.015 * Math.sin(elapsed * 5.2 + 0.8);
+      group.scale.setScalar(pulse);
 
       raycaster.setFromCamera(pointer, camera);
       raycaster.ray.intersectPlane(plane, pointerWorld);
 
-      const repelRadius = 0.6;
-      const repelStrength = 0.28;
+      const repelRadius = 0.32;
+      const repelStrength = 0.04;
 
+      const morphSpeed = 0.06;
       for (let i = 0; i < basePoints.length; i += 1) {
         const base = basePoints[i];
         const jitter = jitterAmp[i];
@@ -167,21 +213,36 @@ const HeartBackground = ({ className }: HeartBackgroundProps) => {
         const repelX = (dx / (dist + 0.001)) * repel;
         const repelY = (dy / (dist + 0.001)) * repel;
 
+        const targetX = targetPoints[i * 3];
+        const targetY = targetPoints[i * 3 + 1];
+        const targetZ = targetPoints[i * 3 + 2];
+        const currentX = points[i * 3];
+        const currentY = points[i * 3 + 1];
+        const currentZ = points[i * 3 + 2];
+
+        const nextX = THREE.MathUtils.lerp(currentX, targetX, morphSpeed);
+        const nextY = THREE.MathUtils.lerp(currentY, targetY, morphSpeed);
+        const nextZ = THREE.MathUtils.lerp(currentZ, targetZ, morphSpeed);
+
+        points[i * 3] = nextX;
+        points[i * 3 + 1] = nextY;
+        points[i * 3 + 2] = nextZ;
+
         positionAttribute.setXYZ(
           i,
-          base.x + repelX + jitterX,
-          base.y + repelY + jitterY,
-          base.z + jitterZ
+          nextX + repelX + jitterX,
+          nextY + repelY + jitterY,
+          nextZ + jitterZ
         );
       }
       positionAttribute.needsUpdate = true;
 
-      const offsetX = pointer.x * 0.6;
-      const offsetY = pointer.y * 0.3;
+      const offsetX = pointer.x * 0.8;
+      const offsetY = pointer.y * 0.45;
 
-      targetRotation.set(pointer.y * 0.35, pointer.x * 0.55);
-      group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, targetRotation.x, 0.05);
-      group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, targetRotation.y, 0.05);
+      targetRotation.set(pointer.y * 0.55, pointer.x * 0.8);
+      group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, targetRotation.x, 0.08);
+      group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, targetRotation.y, 0.08);
 
       camera.position.x = offsetX;
       camera.position.z = CAMERA_RADIUS;

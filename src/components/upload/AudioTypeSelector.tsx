@@ -16,18 +16,23 @@ export function AudioTypeSelector({
   disabled,
 }: AudioTypeSelectorProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-stretch">
       {audioTypes.map((type) => (
-        <motion.div key={type} whileHover={{ scale: disabled ? 1 : 1.02 }} whileTap={{ scale: disabled ? 1 : 0.98 }}>
+        <motion.div
+          key={type}
+          className="h-full"
+          whileHover={{ scale: disabled ? 1 : 1.02 }}
+          whileTap={{ scale: disabled ? 1 : 0.98 }}
+        >
           <Card
-            className={`audio-type-button cursor-pointer transition-all ${
+            className={`audio-type-button h-full cursor-pointer transition-all ${
               selectedType === type
                 ? "border-primary ring-2 ring-primary/20"
                 : "hover:border-primary/50"
             } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => !disabled && onSelect(type)}
           >
-            <CardContent className="flex flex-col items-center gap-2 p-4">
+            <CardContent className="flex h-full flex-col items-center justify-center gap-2 p-4">
               <span className="text-3xl">
                 {(() => {
                   const icon = getAudioTypeIcon(type);

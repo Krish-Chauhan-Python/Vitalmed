@@ -20,7 +20,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { PageNav } from "@/components/layout/PageNav";
 
 export default function Landing() {
   const { toast } = useToast();
@@ -113,15 +112,7 @@ export default function Landing() {
 
   return (
     <div className="page-layout">
-      <PageNav
-        title="Landing"
-        items={[
-          { href: "/#technology", label: "Technology" },
-          { href: "/#insights", label: "Insights" },
-          { href: "/#contact", label: "Contact" },
-        ]}
-      />
-      <div className="page-content text-[#0D2A45]">
+      <div className="page-content text-foreground">
       <section id="top" className="cinematic-hero anchor-offset">
         <div className="ambient-dots" />
         <div className="hero-orb hero-orb--right" />
@@ -137,21 +128,21 @@ export default function Landing() {
               <Activity className="h-4 w-4 text-primary" />
               Precision. Insight. Wellness.
             </div>
-            <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-[#0D2A45]">
+            <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-foreground">
               Your heartbeat and breath,
               <span className="block text-gradient">decoded by AI.</span>
             </h1>
-            <p className="text-base md:text-lg text-[#4B6375] mt-6">
-              VitaSense analyzes heartbeat and lung sounds to predict potential health issues
-              with calm, clinical precision.
+            <p className="text-base md:text-lg text-muted-foreground mt-6">
+             Listen to your core. Predict what’s next.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="glow-button rounded-full" onClick={handlePredictDemo}>
-                Upload Audio
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button size="lg" variant="outline" className="rounded-full" asChild>
-                <Link to="/upload">Explore Demo</Link>
+              <Button
+                size="lg"
+                variant="outline"
+                className="rounded-full bg-[linear-gradient(120deg,#00b9a8,#0096ff)] text-white border-0 hover:opacity-90"
+                asChild
+              >
+                <Link to="/upload">Add New Diagnostic</Link>
               </Button>
             </div>
           </motion.div>
@@ -162,7 +153,7 @@ export default function Landing() {
         <div className="container">
           <div className="text-center mb-12">
             <p className="text-sm font-semibold text-primary">Data Defines Care.</p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-[#0D2A45] mt-3">
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mt-3">
               Numbers that reflect precision
             </h2>
           </div>
@@ -176,8 +167,8 @@ export default function Landing() {
               >
                 <Card className="stat-card rounded-2xl">
                   <CardContent className="p-6 text-center">
-                    <p className="text-2xl font-semibold text-[#0D2A45]">{stat.value}</p>
-                    <p className="text-sm text-[#6B7C8C] mt-2">{stat.label}</p>
+                    <p className="text-2xl font-semibold text-foreground">{stat.value}</p>
+                    <p className="text-sm text-muted-foreground mt-2">{stat.label}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -186,17 +177,24 @@ export default function Landing() {
         </div>
       </section>
 
-      <section id="technology" className="py-16 md:py-24 section-muted anchor-offset">
-        <div className="container">
-          <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+      <section id="technology" className="py-16 md:py-24 section-muted anchor-offset backdrop-blur-sm">
+        <div className="container backdrop-blur-sm">
+          <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center backdrop-blur-sm">
             <div className="glass-panel shadow-soft rounded-3xl p-8 annotated-panel min-h-[360px]">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <img
+                  src="/images/graph.png"
+                  alt="Signal graph"
+                  className="max-h-[500px] w-auto opacity-80"
+                />
+              </div>
               {annotations.map((annotation) => (
                 <div
                   key={annotation.label}
-                  className="absolute text-xs font-semibold text-[#0D2A45]"
+                  className="absolute text-xs font-semibold text-foreground"
                   style={{ top: annotation.top, left: annotation.left }}
                 >
-                  <span className="bg-white/90 px-3 py-1 rounded-full shadow-soft">
+                  <span className="bg-white/90 dark:bg-slate-900/80 px-3 py-1 rounded-full shadow-soft">
                     {annotation.label}
                   </span>
                   <span
@@ -205,22 +203,20 @@ export default function Landing() {
                   />
                 </div>
               ))}
-              <div className="absolute bottom-6 right-6 flex items-center gap-2 text-xs text-[#4B6375]">
+              <div className="absolute bottom-6 right-6 flex items-center gap-2 text-xs text-muted-foreground">
                 <Stethoscope className="h-4 w-4 text-primary" />
-                Certified AI Quality
+                Trusted for precision diagnostics.
               </div>
             </div>
             <div>
               <p className="text-sm font-semibold text-primary mb-3">Certified AI Quality</p>
-              <h2 className="text-3xl md:text-4xl font-semibold text-[#0D2A45]">
+              <h2 className="text-3xl md:text-4xl font-semibold text-foreground">
                 Precision-driven signal intelligence
               </h2>
-              <p className="text-[#4B6375] mt-4">
-                Every heartbeat and lung sound is cleaned, normalized, and analyzed through
-                a multi-stage AI pipeline. VitaSense delivers reliable confidence metrics and
-                clear guidance for modern clinical teams.
+              <p className="text-muted-foreground mt-4">
+                We use custom-built sensors to capture your body's natural sounds. Our technology then clears away the background noise, leaving only the crystal-clear signals of your heart and lungs for our AI to analyze.
               </p>
-              <div className="mt-6 flex items-center gap-4 text-sm text-[#4B6375]">
+              <div className="mt-6 flex items-center gap-4 text-sm text-muted-foreground">
                 <ShieldCheck className="h-5 w-5 text-primary" />
                 Secure AI processing and validated model performance.
               </div>
@@ -233,7 +229,7 @@ export default function Landing() {
         <div className="container">
           <div className="text-center mb-12">
             <p className="text-sm font-semibold text-primary">How it works</p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-[#0D2A45] mt-3">
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mt-3">
               From upload to insight
             </h2>
           </div>
@@ -253,12 +249,12 @@ export default function Landing() {
                       <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
                         <step.icon className="h-6 w-6 text-primary" />
                       </div>
-                      <span className="text-xs font-semibold text-[#9AA8B4]">
+                      <span className="text-xs font-semibold text-muted-foreground">
                         0{index + 1}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-[#0D2A45] mb-2">{step.title}</h3>
-                    <p className="text-sm text-[#6B7C8C]">{step.description}</p>
+                    <h3 className="font-semibold text-foreground mb-2">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground">{step.description}</p>
                   </CardContent>
                 </Card>
                 {index < steps.length - 1 && (
@@ -281,23 +277,23 @@ export default function Landing() {
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div>
               <p className="text-sm font-semibold text-primary">Upload demo</p>
-              <h2 className="text-3xl md:text-4xl font-semibold text-[#0D2A45] mt-3">
+              <h2 className="text-3xl md:text-4xl font-semibold text-foreground mt-3">
                 Experience the core workflow
               </h2>
-              <p className="text-[#4B6375] mt-4">
+              <p className="text-muted-foreground mt-4">
                 Upload an audio sample and watch the waveform and confidence meter respond in real time.
                 Integrate your own prediction model whenever you are ready.
               </p>
-              <div className="mt-6 flex items-center gap-3 text-sm text-[#4B6375]">
+              <div className="mt-6 flex items-center gap-3 text-sm text-muted-foreground">
                 <Mic className="h-5 w-5 text-primary" />
-                Supports WAV and MP3 files with fast preprocessing.
+                Supports WAV files with fast preprocessing.
               </div>
             </div>
             <div className="glass-panel shadow-soft rounded-3xl p-6">
-              <div className="border border-dashed border-[#C7D3DD] rounded-2xl p-6 text-center bg-white/70">
+              <div className="border border-dashed border-[#C7D3DD] dark:border-slate-700 rounded-2xl p-6 text-center bg-white/70 dark:bg-slate-900/70">
                 <CloudUpload className="h-8 w-8 text-primary mx-auto mb-3" />
-                <p className="text-sm font-semibold text-[#0D2A45]">Drop your file here</p>
-                <p className="text-xs text-[#6B7C8C]">WAV or MP3 up to 10MB</p>
+                <p className="text-sm font-semibold text-foreground">Drop your file here</p>
+                <p className="text-xs text-muted-foreground">WAV or MP3 up to 10MB</p>
                 <div className="mt-4 grid gap-2">
                   <Button size="sm" className="glow-button rounded-full" onClick={handlePredictDemo}>
                     Respiratory Analysis
@@ -311,33 +307,6 @@ export default function Landing() {
                 </div>
               </div>
 
-              <div className="mt-6">
-                <div className="flex items-center justify-between text-xs text-[#6B7C8C] mb-2">
-                  <span>Processing</span>
-                  <span>72%</span>
-                </div>
-                <Progress value={72} className="h-2" />
-              </div>
-
-              <div className="mt-6 rounded-2xl bg-white/80 border border-[#C7D3DD] p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm font-semibold text-[#0D2A45]">Waveform preview</p>
-                  <span className="text-xs text-[#6B7C8C]">00:22</span>
-                </div>
-                <div className="wave-bars">
-                  {Array.from({ length: 12 }).map((_, index) => (
-                    <span
-                      key={index}
-                      style={{ height: `${30 + (index % 5) * 14}px`, animationDelay: `${index * 0.1}s` }}
-                    />
-                  ))}
-                </div>
-                <div className="mt-4 flex items-center justify-between text-sm">
-                  <span className="text-[#6B7C8C]">Confidence</span>
-                  <span className="font-semibold text-[#0D2A45]">92.6%</span>
-                </div>
-                <Progress value={92.6} className="h-2 mt-2" />
-              </div>
             </div>
           </div>
         </div>
@@ -347,10 +316,10 @@ export default function Landing() {
         <div className="container">
           <div className="text-center mb-12">
             <p className="text-sm font-semibold text-primary">Health insights</p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-[#0D2A45] mt-3">
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mt-3">
               Calm, intelligent, and clinically precise
             </h2>
-            <p className="text-[#4B6375] mt-4 max-w-2xl mx-auto">
+            <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
               Minimalist design meets rigorous signal analysis. VitaSense keeps the focus on what matters.
             </p>
           </div>
@@ -368,8 +337,8 @@ export default function Landing() {
                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                       <insight.icon className="h-6 w-6 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-[#0D2A45] mb-2">{insight.title}</h3>
-                    <p className="text-sm text-[#6B7C8C]">{insight.description}</p>
+                    <h3 className="font-semibold text-foreground mb-2">{insight.title}</h3>
+                    <p className="text-sm text-muted-foreground">{insight.description}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -378,44 +347,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 section-muted">
-        <div className="container">
-          <div className="text-center mb-12">
-            <p className="text-sm font-semibold text-primary">Testimonials</p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-[#0D2A45] mt-3">
-              Results that earn trust
-            </h2>
-          </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            {testimonials.map((item, index) => (
-              <motion.div
-                key={item.name}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="neumo-card rounded-2xl h-full">
-                  <CardContent className="p-6 flex flex-col h-full">
-                    <div className="flex items-center gap-1 text-primary mb-4">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className="h-4 w-4" />
-                      ))}
-                    </div>
-                    <p className="text-sm text-[#6B7C8C] leading-relaxed flex-1">
-                      "{item.quote}"
-                    </p>
-                    <div className="mt-6">
-                      <p className="font-semibold text-[#0D2A45]">{item.name}</p>
-                      <p className="text-xs text-[#6B7C8C]">{item.role}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       <section id="contact" className="py-16 md:py-24 anchor-offset">
         <div className="container">
@@ -430,11 +362,11 @@ export default function Landing() {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button size="lg" variant="secondary" className="glow-button rounded-full" onClick={handlePredictDemo}>
-                  Try the Demo
+                  Continue to Diagnostics
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <div className="flex w-full max-w-sm items-center gap-2 bg-white/90 rounded-full px-3 py-2">
-                  <Mail className="h-4 w-4 text-[#9AA8B4]" />
+                <div className="flex w-full max-w-sm items-center gap-2 bg-white/90 dark:bg-slate-900/80 rounded-full px-3 py-2">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Enter email for updates"
                     className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"

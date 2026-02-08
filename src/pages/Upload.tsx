@@ -7,17 +7,28 @@ import { AudioTypeSelector } from "@/components/upload/AudioTypeSelector";
 import { AnalysisResult } from "@/components/upload/AnalysisResult";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { PageNav } from "@/components/layout/PageNav";
 import { supabase } from "@/integrations/supabase/client";
 import { type AudioType } from "@/lib/mockAnalysis";
 
 // --- Real Analysis Function (FastAPI integration) ---
-async function performAnalysis(file: File) {
+const getApiUrl = (type: AudioType) => {
+  switch (type) {
+    case "respiratory":
+      return "http://127.0.0.1:8000/predict";
+    case "heartbeat":
+      return "http://127.0.0.1:8001/predict";
+    case "cough":
+    default:
+      return "http://127.0.0.1:8002/predict";
+  }
+};
+
+async function performAnalysis(file: File, type: AudioType) {
   const formData = new FormData();
   formData.append("file", file);
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/predict", {
+    const response = await fetch(getApiUrl(type), {
       method: "POST",
       body: formData,
     });
@@ -115,6 +126,8 @@ export default function Upload() {
     } else {
       root.classList.remove("heart-emphasis");
     }
+    localStorage.setItem("vitasense-analysis-type", audioType);
+    window.dispatchEvent(new CustomEvent("vitasense-analysis-change", { detail: audioType }));
     return () => {
       root.classList.remove("heart-emphasis");
     };
@@ -139,7 +152,7 @@ export default function Upload() {
 
     setIsAnalyzing(true);
     try {
-      const result = await performAnalysis(selectedFile);
+      const result = await performAnalysis(selectedFile, audioType);
       setAnalysisResult(result);
       toast({
         title: "Analysis Complete",
@@ -206,15 +219,7 @@ export default function Upload() {
         ["--upload-fade" as "--upload-fade"]: String(fade),
       }}
     >
-      <PageNav
-        title="Upload"
-        items={[
-          { href: "/upload#overview", label: "Overview" },
-          { href: "/upload#analysis", label: "Analysis" },
-          { href: "/upload#results", label: "Results" },
-        ]}
-      />
-      <div className="page-content">
+      <div className="page-content text-foreground">
         <div className="container py-8 max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -222,7 +227,10 @@ export default function Upload() {
             className="space-y-6"
           >
         {/* Header */}
-        <section id="overview" className="text-center">
+        <section
+          id="overview"
+          className="text-center rounded-2xl border border-white/10 bg-white/10 dark:bg-slate-900/40 backdrop-blur px-6 py-6"
+        >
           <h1 className="text-3xl font-bold mb-2">Audio Analysis</h1>
           <p className="text-muted-foreground">
             Upload an audio file and select the type of analysis
@@ -233,7 +241,10 @@ export default function Upload() {
         {!analysisResult ? (
           <>
             {/* Type Selector */}
-            <section id="analysis" className="space-y-3">
+            <section
+              id="analysis"
+              className="space-y-3 rounded-2xl border border-white/10 bg-white/10 dark:bg-slate-900/40 backdrop-blur px-6 py-6"
+            >
               <label className="text-sm font-medium">Select Analysis Type</label>
               <AudioTypeSelector
                 selectedType={audioType}
@@ -243,18 +254,20 @@ export default function Upload() {
             </section>
 
             {/* File Uploader */}
-            <AudioUploader
-              onFileSelect={handleFileSelect}
-              isAnalyzing={isAnalyzing}
-              selectedFile={selectedFile}
-              onClear={handleClear}
-            />
+            <div className="rounded-2xl border border-white/10 bg-white/10 dark:bg-slate-900/40 backdrop-blur px-6 py-6">
+              <AudioUploader
+                onFileSelect={handleFileSelect}
+                isAnalyzing={isAnalyzing}
+                selectedFile={selectedFile}
+                onClear={handleClear}
+              />
+            </div>
 
             {/* Always-visible Button */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="pt-4"
+              className="rounded-2xl border border-white/10 bg-white/10 dark:bg-slate-900/40 backdrop-blur px-6 py-6"
             >
               <Button
                 onClick={handleAnalyze}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
-import { History as HistoryIcon, Filter, Trash2, FileAudio, Play } from "lucide-react";
+import { Filter, Trash2, FileAudio, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -37,7 +37,6 @@ import {
 } from "@/components/ui/pagination";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { PageNav } from "@/components/layout/PageNav";
 import { supabase } from "@/integrations/supabase/client";
 import {
   getAudioTypeLabel,
@@ -73,7 +72,7 @@ export default function History() {
 
   const chartConfig = {
     confidence: {
-      label: "Confidence",
+      label: "Health",
       color: "hsl(var(--primary))",
     },
   } as const;
@@ -191,15 +190,7 @@ export default function History() {
 
   return (
     <div className="page-layout">
-      <PageNav
-        title="History"
-        items={[
-          { href: "/history#overview", label: "Overview" },
-          { href: "/history#trend", label: "Trend" },
-          { href: "/history#records", label: "Records" },
-        ]}
-      />
-      <div className="page-content">
+      <div className="page-content text-foreground">
         <div className="container py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -210,7 +201,11 @@ export default function History() {
         <section id="overview" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
-              <HistoryIcon className="h-8 w-8 text-primary" />
+              <img
+                src="/images/red%20logo.png"
+                alt="VitalMed"
+                className="h-8 w-8"
+              />
               Analysis History
             </h1>
             <p className="text-muted-foreground mt-1">
@@ -242,9 +237,9 @@ export default function History() {
         </section>
 
         {/* Confidence Trend */}
-        <Card id="trend">
+        <Card id="trend" className="bg-white/10 dark:bg-slate-900/40 backdrop-blur border-white/10">
           <CardHeader>
-            <CardTitle className="text-lg">Confidence Trend</CardTitle>
+            <CardTitle className="text-lg">Health Trend</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -272,7 +267,7 @@ export default function History() {
                       <ChartTooltipContent
                         formatter={(value) => [
                           `${Number(value).toFixed(1)}%`,
-                          "Confidence",
+                          "Health",
                         ]}
                       />
                     }
@@ -294,7 +289,7 @@ export default function History() {
         </Card>
 
         {/* Table */}
-        <Card id="records">
+        <Card id="records" className="bg-white/10 dark:bg-slate-900/40 backdrop-blur border-white/10">
           <CardHeader>
             <CardTitle className="text-lg">
               {analyses?.length ?? 0} Analysis Records
@@ -316,7 +311,7 @@ export default function History() {
                       <TableHead>Type</TableHead>
                       <TableHead className="hidden sm:table-cell">File</TableHead>
                       <TableHead>Prediction</TableHead>
-                      <TableHead>Confidence</TableHead>
+                      <TableHead>Health</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>

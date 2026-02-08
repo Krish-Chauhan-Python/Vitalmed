@@ -35,22 +35,29 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-[#203245] bg-[#0b1118]/95 backdrop-blur supports-[backdrop-filter]:bg-[#0b1118]/90">
-      <div className="container flex h-16 items-center justify-between">
+    <nav
+      className="sticky top-0 z-50 w-full border-b border-white/10 bg-white/10 backdrop-blur supports-[backdrop-filter]:bg-white/20 dark:border-white/5 dark:bg-black/30"
+      style={{
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif",
+      }}
+    >
+      <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg health-gradient shadow-soft">
-            <img src="/images/red logo.png" alt="VitalMed Logo" className="h-5 w-5" />
+        <Link to="/" className="flex items-center gap-2 font-bold text-xl -ml-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-sky-400 via-cyan-400 to-blue-500 shadow-soft">
+            <img src="/images/red logo.png" alt="VITALMed Logo" className="h-5 w-5" />
           </div>
-          <span className="hidden sm:inline text-slate-100">VitalMed</span>
+          <span className="hidden sm:inline bg-gradient-to-r from-sky-300 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+            VITALMed
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => {
             if (link.protected && !user) return null;
-            const className = `text-sm font-medium transition-colors hover:text-sky-200 ${
-              isActive(link.hash, link.href) ? "text-sky-200" : "text-slate-200/70"
+            const className = `text-sm font-medium transition-colors hover:text-foreground ${
+              isActive(link.hash, link.href) ? "text-foreground" : "text-foreground/70"
             } ${link.disabled ? "cursor-not-allowed opacity-60" : ""}`;
 
             if (link.href.startsWith("/")) {
@@ -80,11 +87,9 @@ export function Navbar() {
         </div>
 
         {/* Right Side Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mr-3">
           {/* User Menu / Auth Buttons */}
-          <Button size="sm" className="rounded-full glow-button" asChild>
-            <Link to="/upload">Try Demo</Link>
-          </Button>
+     
 
           {user ? (
             <DropdownMenu>
@@ -92,7 +97,7 @@ export function Navbar() {
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <Avatar className="h-9 w-9 border border-slate-700/60">
                     <AvatarImage src="" alt={user.email ?? "User"} />
-                    <AvatarFallback className="bg-slate-800 text-slate-200">
+                    <AvatarFallback className="bg-muted text-foreground">
                       {(user.email ?? "U").slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>

@@ -31,6 +31,13 @@ export function AnalysisResult({
     !prediction.toLowerCase().includes("congested") &&
     !prediction.toLowerCase().includes("elevated");
 
+  const icon = getAudioTypeIcon(audioType);
+  const iconNode = icon.kind === "image" ? (
+    <img src={icon.value} alt="Analysis type" className="h-10 w-10" />
+  ) : (
+    icon.value
+  );
+
   const getConfidenceColor = (conf: number): string => {
     if (conf >= 90) return "text-green-600 dark:text-green-400";
     if (conf >= 80) return "text-blue-600 dark:text-blue-400";
@@ -49,7 +56,7 @@ export function AnalysisResult({
         
         <CardHeader className="pb-3">
           <div className="flex items-center gap-3">
-            <span className="text-4xl">{getAudioTypeIcon(audioType)}</span>
+            <span className="text-4xl">{iconNode}</span>
             <div>
               <CardTitle className="text-lg">{getAudioTypeLabel(audioType)}</CardTitle>
               <p className="text-sm text-muted-foreground">{filename}</p>
@@ -74,7 +81,7 @@ export function AnalysisResult({
           {/* Confidence Score */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">Confidence Score</span>
+              <span className="text-sm font-medium">Health score</span>
               <span className={`text-sm font-bold ${getConfidenceColor(confidence)}`}>
                 {confidence.toFixed(1)}%
               </span>
@@ -82,11 +89,6 @@ export function AnalysisResult({
             <Progress value={confidence} className="h-2" />
           </div>
 
-          {/* Disclaimer */}
-          <p className="text-xs text-muted-foreground italic">
-            ⚠️ This is a simulated analysis for demonstration purposes only. 
-            Please consult a healthcare professional for actual medical advice.
-          </p>
         </CardContent>
 
         <CardFooter className="gap-2">
